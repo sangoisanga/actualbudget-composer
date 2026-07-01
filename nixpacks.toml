@@ -4,4 +4,6 @@ NIXPACKS_NODE_VERSION = "22"
 [phases.setup]
 # Required by @actual-app/api → better-sqlite3 native C++ addon.
 # Equivalent to the former Dockerfile's apk add python3 make g++.
-nixPkgs = ["python3", "gnumake", "gcc"]
+# nodejs added explicitly because the nix-npm-overlay reads NIXPACKS_NODE_VERSION
+# at nix-env evaluation time, but the Dockerfile sets the env var after that step.
+nixPkgs = ["nodejs", "python3", "gnumake", "gcc"]
