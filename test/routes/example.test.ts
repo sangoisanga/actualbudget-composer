@@ -1,13 +1,10 @@
-import { test } from 'node:test'
-import * as assert from 'node:assert'
+import { describe, it, expect } from 'vitest'
 import { build } from '../helper'
 
-test('example is loaded', async (t) => {
-  const app = await build(t)
-
-  const res = await app.inject({
-    url: '/example'
+describe('example route', () => {
+  it('returns "this is an example"', async () => {
+    const app = await build()
+    const res = await app.inject({ url: '/example' })
+    expect(res.payload).toBe('this is an example')
   })
-
-  assert.equal(res.payload, 'this is an example')
 })

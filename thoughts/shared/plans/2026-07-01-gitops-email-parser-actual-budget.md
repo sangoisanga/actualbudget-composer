@@ -20,7 +20,7 @@ extracted transactions are imported into Actual Budget via `@actual-app/api`.
 
 ### Key Discoveries
 
-- **`@actual-app/api`** requires `better-sqlite3`, a native C++ addon — Nixpacks/Docker builds need `python3`, `make`, `g++` available (`@actual-app/api` v26.6.0, CJS-only)
+- **`@actual-app/api`** requires `better-sqlite3`, a native C++ addon — Docker builds need `python3`, `make`, `g++` available in the builder stage (`@actual-app/api` v26.6.0, CJS-only)
 - **`process.cwd()`** is the correct path strategy for loading `rules/rules.json` — `fastify start dist/app.js` preserves the project root as CWD. `__dirname` would resolve to `dist/` and require fragile `../../` relative paths (confirmed via `src/app.ts:8`)
 - **Fastify-CLI has built-in `--dotenv` flag** — loads `.env` into `process.env` before app starts, no `dotenv` package needed
 - **Zero env var usage** exists today — the entire project accesses no environment variables
@@ -30,7 +30,7 @@ extracted transactions are imported into Actual Budget via `@actual-app/api`.
 
 ### Constraints
 
-- Lockfile must be committed to Git for deterministic Coolify/Nixpacks builds
+- Lockfile must be committed to Git for deterministic Docker builds
 - `rules/rules.json` must be readable at runtime via `process.cwd()` (not `__dirname`)
 - Coolify Docker push deployment will be set up later; plan includes build config but not live Coolify wiring
 - Project is `"type": "commonjs"` implicitly (no `"type"` field in `package.json`); cheerio/zod are ESM-first but ship dual CJS — TypeScript compilation handles interop
@@ -226,15 +226,15 @@ Run `npm install` after dependency changes and commit the generated `package-loc
 
 #### Automated Verification
 
-- [ ] `npm install` — completes without errors, lockfile generated
-- [ ] `npx tsc --noEmit` — TypeScript compiles cleanly
-- [ ] `npx vitest run` — all 3 existing tests pass under Vitest
+- [x] `npm install` — completes without errors, lockfile generated
+- [x] `npx tsc --noEmit` — TypeScript compiles cleanly
+- [x] `npx vitest run` — all 3 existing tests pass under Vitest
 - [ ] `npx vitest run --coverage` — coverage report generated
 
 #### Manual Verification
 
-- [ ] `package-lock.json` exists and is tracked by Git
-- [ ] No `node:test`, `c8`, or `ts-node` references remain in `package.json`
+- [x] `package-lock.json` exists and is tracked by Git
+- [x] No `node:test`, `c8`, or `ts-node` references remain in `package.json`
 
 ---
 
@@ -373,14 +373,14 @@ describe('Parser Matrix', () => {
 
 #### Automated Verification
 
-- [ ] `npx tsc --noEmit` — no type errors in `src/parser.ts`
-- [ ] `npx vitest run` — all tests pass including matrix tests
-- [ ] `npx vitest run` — edge case tests pass (unmapped sender, empty match)
+- [x] `npx tsc --noEmit` — no type errors in `src/parser.ts`
+- [x] `npx vitest run` — all tests pass including matrix tests
+- [x] `npx vitest run` — edge case tests pass (unmapped sender, empty match)
 
 #### Manual Verification
 
-- [ ] `rules/rules.json` is valid JSON and parsable by `zod` (verified at test time via `parseTransaction()` import)
-- [ ] Test fails if `.money-text` selector doesn't match the fixture
+- [x] `rules/rules.json` is valid JSON and parsable by `zod` (verified at test time via `parseTransaction()` import)
+- [x] Test fails if `.money-text` selector doesn't match the fixture
 
 ---
 
@@ -536,8 +536,8 @@ describe('POST /webhook', () => {
 
 #### Automated Verification
 
-- [ ] `npx tsc --noEmit` — both `src/index.ts` and `src/app.ts` compile without errors
-- [ ] `npx vitest run` — webhook tests pass
+- [x] `npx tsc --noEmit` — both `src/index.ts` and `src/app.ts` compile without errors
+- [x] `npx vitest run` — webhook tests pass
 - [ ] Server starts locally with `npm run build:ts && node dist/index.js` (expect failure on Actual Budget init if env vars not set, but Fastify should bind port 8080)
 
 #### Manual Verification
@@ -551,29 +551,44 @@ describe('POST /webhook', () => {
 
 ### Overview
 
-Add Nixpacks/Docker build configuration so Coolify can build the container with
+Add Dockerfile for container-based deployment so Coolify can build the image with
 native addon support (`better-sqlite3` needs build tools). Add `.env.example` for
 required environment variables. No live Coolify wiring is performed in this phase.
 
 ### Changes Required
 
-#### 1. Add Nixpacks configuration for native addons
+#### 1. Add multi-stage Dockerfile
 
-**File**: `nixpacks.toml` (new)
-**Changes**: Ensure build environment has Python, make, and g++ for `better-sqlite3`.
+**File**: `Dockerfile` (new)
+**Changes**: Multi-stage build with native addon toolchain in builder stage, slim runtime image.
 
-```toml
-[phases.setup]
-nixPkgs = ["nodejs", "python3", "gnumake", "gcc"]
+```dockerfile
+FROM node:22-alpine AS builder
 
-[phases.install]
-cmds = ["npm ci"]
+RUN apk add --no-cache python3 make g++
 
-[phases.build]
-cmds = ["npm run build:ts"]
+WORKDIR /app
 
-[start]
-cmd = "node dist/index.js"
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY tsconfig.json ./
+COPY src/ src/
+RUN npm run build:ts
+
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./
+COPY rules/ ./rules/
+
+ENV NODE_ENV=production
+EXPOSE 8080
+
+CMD ["node", "dist/index.js"]
 ```
 
 #### 2. Add environment variable template
@@ -603,13 +618,13 @@ ACTUAL_ACCOUNT_ID=your-account-id
 
 #### Automated Verification
 
-- [ ] `nixpacks.toml` is valid TOML
-- [ ] `.env.example` exists with all required keys
+- [x] `Dockerfile` uses multi-stage build to keep image lean
+- [x] `.env.example` exists with all required keys
 
 #### Manual Verification
 
-- [ ] `.env` is not tracked by Git (confirm with `git status`)
-- [ ] Coolify build simulation: `nixpacks build . --name actualbudget-composer` succeeds (optional, requires nixpacks CLI installed locally)
+- [x] `.env` is not tracked by Git (confirm with `git status`)
+- [ ] `docker build -t actualbudget-composer .` succeeds locally
 
 ---
 

@@ -1,0 +1,6 @@
+{
+  "no-reply@momo.vn": {
+    "amountSelector": ".money-text",
+    "payeeSelector": ".merchant-title"
+  }
+}
