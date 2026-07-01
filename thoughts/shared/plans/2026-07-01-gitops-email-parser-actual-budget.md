@@ -129,14 +129,14 @@ Add `vitest.config.ts` for TypeScript test transpilation.
 **Changes**: Minimal config for Node environment with explicit imports.
 
 ```typescript
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
     include: ['test/**/*.test.ts'],
     environment: 'node',
   },
-})
+});
 ```
 
 #### 4. Rewrite test helper to use Vitest
@@ -145,25 +145,25 @@ export default defineConfig({
 **Changes**: Replace `node:test` imports with Vitest, remove `TestContext` type.
 
 ```typescript
-import { afterAll } from 'vitest'
-import * as path from 'node:path'
+import { afterAll } from 'vitest';
+import * as path from 'node:path';
 
-const helper = require('fastify-cli/helper.js')
+const helper = require('fastify-cli/helper.js');
 
-const AppPath = path.join(__dirname, '..', 'src', 'app.ts')
+const AppPath = path.join(__dirname, '..', 'src', 'app.ts');
 
 function config() {
-  return { skipOverride: true }
+  return { skipOverride: true };
 }
 
 async function build() {
-  const argv = [AppPath]
-  const app = await helper.build(argv, config())
-  afterAll(() => app.close())
-  return app
+  const argv = [AppPath];
+  const app = await helper.build(argv, config());
+  afterAll(() => app.close());
+  return app;
 }
 
-export { config, build }
+export { config, build };
 ```
 
 #### 5. Rewrite test files to Vitest syntax
@@ -172,50 +172,50 @@ export { config, build }
 **Changes**: Replace `node:test` + `node:assert` with Vitest.
 
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { build } from '../helper'
+import { describe, it, expect } from 'vitest';
+import { build } from '../helper';
 
 describe('root route', () => {
   it('returns { root: true }', async () => {
-    const app = await build()
-    const res = await app.inject({ url: '/' })
-    expect(JSON.parse(res.payload)).toEqual({ root: true })
-  })
-})
+    const app = await build();
+    const res = await app.inject({ url: '/' });
+    expect(JSON.parse(res.payload)).toEqual({ root: true });
+  });
+});
 ```
 
 **File**: `test/routes/example.test.ts`
 **Changes**: Same conversion.
 
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { build } from '../helper'
+import { describe, it, expect } from 'vitest';
+import { build } from '../helper';
 
 describe('example route', () => {
   it('returns "this is an example"', async () => {
-    const app = await build()
-    const res = await app.inject({ url: '/example' })
-    expect(res.payload).toBe('this is an example')
-  })
-})
+    const app = await build();
+    const res = await app.inject({ url: '/example' });
+    expect(res.payload).toBe('this is an example');
+  });
+});
 ```
 
 **File**: `test/plugins/support.test.ts`
 **Changes**: Same conversion.
 
 ```typescript
-import { describe, it, expect } from 'vitest'
-import Fastify from 'fastify'
-import Support from '../../src/plugins/support'
+import { describe, it, expect } from 'vitest';
+import Fastify from 'fastify';
+import Support from '../../src/plugins/support';
 
 describe('support plugin', () => {
   it('decorates fastify with someSupport', async () => {
-    const fastify = Fastify()
-    void fastify.register(Support)
-    await fastify.ready()
-    expect(fastify.someSupport()).toBe('hugs')
-  })
-})
+    const fastify = Fastify();
+    void fastify.register(Support);
+    await fastify.ready();
+    expect(fastify.someSupport()).toBe('hugs');
+  });
+});
 ```
 
 #### 6. Commit lockfile
@@ -268,44 +268,44 @@ behavior before it's wired to any server.
 **Changes**: Loads `rules/rules.json` from CWD, validates with Zod, exports `parseTransaction()`.
 
 ```typescript
-import * as cheerio from 'cheerio'
-import { z } from 'zod'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import * as cheerio from 'cheerio';
+import { z } from 'zod';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const RuleSchema = z.object({
   amountSelector: z.string().min(1),
   payeeSelector: z.string().min(1),
-})
+});
 
-const RulesMatrixSchema = z.record(z.string(), RuleSchema)
+const RulesMatrixSchema = z.record(z.string(), RuleSchema);
 
-const rulesPath = join(process.cwd(), 'rules', 'rules.json')
-const rawRules = JSON.parse(readFileSync(rulesPath, 'utf-8'))
-const activeRules = RulesMatrixSchema.parse(rawRules)
+const rulesPath = join(process.cwd(), 'rules', 'rules.json');
+const rawRules = JSON.parse(readFileSync(rulesPath, 'utf-8'));
+const activeRules = RulesMatrixSchema.parse(rawRules);
 
 export interface ParsedTransaction {
-  amount: number
-  payee: string
+  amount: number;
+  payee: string;
 }
 
 export function parseTransaction(htmlBody: string, sender: string): ParsedTransaction {
-  const rule = activeRules[sender]
+  const rule = activeRules[sender];
   if (!rule) {
-    throw new Error(`Unmapped sender: ${sender}`)
+    throw new Error(`Unmapped sender: ${sender}`);
   }
 
-  const $ = cheerio.load(htmlBody)
-  const rawAmount = $(rule.amountSelector).text().trim()
-  const rawPayee = $(rule.payeeSelector).text().trim()
+  const $ = cheerio.load(htmlBody);
+  const rawAmount = $(rule.amountSelector).text().trim();
+  const rawPayee = $(rule.payeeSelector).text().trim();
 
   if (!rawAmount || !rawPayee) {
-    throw new Error(`DOM selectors returned empty match for sender: ${sender}`)
+    throw new Error(`DOM selectors returned empty match for sender: ${sender}`);
   }
 
-  const numericAmount = parseFloat(rawAmount.replace(/[^0-9.]/g, ''))
+  const numericAmount = parseFloat(rawAmount.replace(/[^0-9.]/g, ''));
 
-  return { amount: numericAmount, payee: rawPayee }
+  return { amount: numericAmount, payee: rawPayee };
 }
 ```
 
@@ -315,12 +315,14 @@ export function parseTransaction(htmlBody: string, sender: string): ParsedTransa
 **Changes**: Real HTML export from a MoMo transaction alert email. Must contain elements matching `.money-text` and `.merchant-title`.
 
 ```html
-<html><body>
-<div class="transaction-detail">
-  <span class="money-text">50,000 VND</span>
-  <span class="merchant-title">Gong Cha Tea</span>
-</div>
-</body></html>
+<html>
+  <body>
+    <div class="transaction-detail">
+      <span class="money-text">50,000 VND</span>
+      <span class="merchant-title">Gong Cha Tea</span>
+    </div>
+  </body>
+</html>
 ```
 
 #### 4. Create matrix test
@@ -329,10 +331,10 @@ export function parseTransaction(htmlBody: string, sender: string): ParsedTransa
 **Changes**: Data-driven test iterating over fixtures, senders, and expected values.
 
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { parseTransaction } from '../src/parser'
+import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { parseTransaction } from '../src/parser';
 
 const testScenarios = [
   {
@@ -340,33 +342,33 @@ const testScenarios = [
     sender: 'no-reply@momo.vn',
     expected: { amount: 50000, payee: 'Gong Cha Tea' },
   },
-]
+];
 
 describe('Parser Matrix', () => {
   for (const scenario of testScenarios) {
     it(`parses ${scenario.fixture} from ${scenario.sender}`, () => {
-      const htmlPath = join(__dirname, 'fixtures', scenario.fixture)
-      const htmlBody = readFileSync(htmlPath, 'utf-8')
+      const htmlPath = join(__dirname, 'fixtures', scenario.fixture);
+      const htmlBody = readFileSync(htmlPath, 'utf-8');
 
-      const result = parseTransaction(htmlBody, scenario.sender)
+      const result = parseTransaction(htmlBody, scenario.sender);
 
-      expect(result.amount).toBe(scenario.expected.amount)
-      expect(result.payee).toBe(scenario.expected.payee)
-    })
+      expect(result.amount).toBe(scenario.expected.amount);
+      expect(result.payee).toBe(scenario.expected.payee);
+    });
   }
 
   it('throws on unmapped sender', () => {
     expect(() => parseTransaction('<html></html>', 'unknown@bank.com')).toThrow(
       'Unmapped sender: unknown@bank.com',
-    )
-  })
+    );
+  });
 
   it('throws on empty selector match', () => {
     expect(() =>
       parseTransaction('<html><div class="wrong">nope</div></html>', 'no-reply@momo.vn'),
-    ).toThrow('DOM selectors returned empty match')
-  })
-})
+    ).toThrow('DOM selectors returned empty match');
+  });
+});
 ```
 
 ### Success Criteria
@@ -389,6 +391,7 @@ describe('Parser Matrix', () => {
 ### Overview
 
 Replace the scaffold `src/app.ts` with a standalone Fastify server that:
+
 - Registers a catch-all content type parser for raw email bodies
 - Exposes `POST /webhook` for Gmail forwarding
 - Initializes Actual Budget API on startup
@@ -403,37 +406,37 @@ Replace the scaffold `src/app.ts` with a standalone Fastify server that:
 **Changes**: Full Fastify server with webhook and Actual Budget wiring.
 
 ```typescript
-import Fastify from 'fastify'
-import * as api from '@actual-app/api'
-import { parseTransaction } from './parser'
+import Fastify from 'fastify';
+import * as api from '@actual-app/api';
+import { parseTransaction } from './parser';
 
-const fastify = Fastify({ logger: true })
+const fastify = Fastify({ logger: true });
 
 async function initActual() {
   await api.init({
     dataDir: '/app/data',
     serverURL: process.env.ACTUAL_SERVER_URL!,
     password: process.env.ACTUAL_PASSWORD!,
-  })
-  await api.downloadBudget(process.env.ACTUAL_SYNC_ID!)
+  });
+  await api.downloadBudget(process.env.ACTUAL_SYNC_ID!);
 }
 
 async function getSenderFromPayload(body: string): Promise<string> {
   // Placeholder — extract sender from raw forwarded email headers.
   // Real implementation depends on Gmail forwarding payload format.
   // For now, return a hardcoded value or extract from a known header.
-  const match = body.match(/^From:\s*(.+@.+)$/im)
-  if (match) return match[1].trim()
-  throw new Error('Could not extract sender from email payload')
+  const match = body.match(/^From:\s*(.+@.+)$/im);
+  if (match) return match[1].trim();
+  throw new Error('Could not extract sender from email payload');
 }
 
 fastify.post('/webhook', async (req) => {
-  const rawEmail = req.body as string
+  const rawEmail = req.body as string;
 
   try {
-    const sender = await getSenderFromPayload(rawEmail)
-    const tx = parseTransaction(rawEmail, sender)
-    const centsAmount = Math.round(tx.amount * -100)
+    const sender = await getSenderFromPayload(rawEmail);
+    const tx = parseTransaction(rawEmail, sender);
+    const centsAmount = Math.round(tx.amount * -100);
 
     await api.importTransactions(process.env.ACTUAL_ACCOUNT_ID!, [
       {
@@ -442,25 +445,23 @@ fastify.post('/webhook', async (req) => {
         payee_name: tx.payee,
         cleared: true,
       },
-    ])
+    ]);
 
-    return { status: 'synced' }
+    return { status: 'synced' };
   } catch (err) {
-    fastify.log.error(err)
+    fastify.log.error(err);
     // Return 200 to prevent Gmail from backing off on parse errors
-    return { error: (err as Error).message }
+    return { error: (err as Error).message };
   }
-})
+});
 
 const start = async () => {
-  fastify.addContentTypeParser('*', { parseAs: 'string' }, (_req, _payload, done) =>
-    done(null),
-  )
-  await initActual()
-  await fastify.listen({ port: 8080, host: '0.0.0.0' })
-}
+  fastify.addContentTypeParser('*', { parseAs: 'string' }, (_req, _payload, done) => done(null));
+  await initActual();
+  await fastify.listen({ port: 8080, host: '0.0.0.0' });
+};
 
-start()
+start();
 ```
 
 #### 2. Keep existing autoload app for backward compatibility
@@ -482,54 +483,52 @@ No changes needed.
 **Changes**: Integration test for the webhook endpoint.
 
 ```typescript
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import Fastify from 'fastify'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import Fastify from 'fastify';
 
 // Test the webhook handler in isolation — mock Actual Budget API
 describe('POST /webhook', () => {
-  let app: Fastify.FastifyInstance
+  let app: Fastify.FastifyInstance;
 
   beforeAll(async () => {
-    app = Fastify()
-    app.addContentTypeParser('*', { parseAs: 'string' }, (_req, _payload, done) =>
-      done(null),
-    )
+    app = Fastify();
+    app.addContentTypeParser('*', { parseAs: 'string' }, (_req, _payload, done) => done(null));
     // Register a minimal webhook handler for testing
     app.post('/webhook', async (req) => {
       // Simplified: test parser logic without Actual Budget dependency
-      const body = req.body as string
+      const body = req.body as string;
       if (!body || body.length === 0) {
-        return { error: 'Empty body' }
+        return { error: 'Empty body' };
       }
-      return { status: 'received', length: body.length }
-    })
-    await app.ready()
-  })
+      return { status: 'received', length: body.length };
+    });
+    await app.ready();
+  });
 
   afterAll(async () => {
-    await app.close()
-  })
+    await app.close();
+  });
 
   it('accepts raw email body and returns 200', async () => {
     const res = await app.inject({
       method: 'POST',
       url: '/webhook',
       payload: '<html><body>Test email</body></html>',
-    })
-    expect(res.statusCode).toBe(200)
-    expect(JSON.parse(res.payload)).toHaveProperty('status', 'received')
-  })
+    });
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.payload)).toHaveProperty('status', 'received');
+  });
 
   it('returns 200 even on empty body', async () => {
     const res = await app.inject({
       method: 'POST',
       url: '/webhook',
       payload: '',
-    })
-    expect(res.statusCode).toBe(200)
-    expect(JSON.parse(res.payload)).toHaveProperty('error')
-  })
-})
+    });
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.payload)).toHaveProperty('error');
+  });
+});
 ```
 
 ### Success Criteria
@@ -632,14 +631,14 @@ ACTUAL_ACCOUNT_ID=your-account-id
 
 ### Unit Tests
 
-| Test | File | What It Verifies |
-|---|---|---|
-| `parseTransaction` with fixture | `tests/matrix.test.ts` | Cheerio extraction with real HTML |
-| Unmapped sender throws | `tests/matrix.test.ts` | Error handling for unknown senders |
-| Empty selector match throws | `tests/matrix.test.ts` | Error handling for broken selectors |
-| Content type parser | `tests/routes/webhook.test.ts` | Raw body accepted |
-| Webhook 200 always | `tests/routes/webhook.test.ts` | Gmail backoff prevention |
-| Existing route tests | `test/routes/*.test.ts` | No regressions from Phase 1 migration |
+| Test                            | File                           | What It Verifies                      |
+| ------------------------------- | ------------------------------ | ------------------------------------- |
+| `parseTransaction` with fixture | `tests/matrix.test.ts`         | Cheerio extraction with real HTML     |
+| Unmapped sender throws          | `tests/matrix.test.ts`         | Error handling for unknown senders    |
+| Empty selector match throws     | `tests/matrix.test.ts`         | Error handling for broken selectors   |
+| Content type parser             | `tests/routes/webhook.test.ts` | Raw body accepted                     |
+| Webhook 200 always              | `tests/routes/webhook.test.ts` | Gmail backoff prevention              |
+| Existing route tests            | `test/routes/*.test.ts`        | No regressions from Phase 1 migration |
 
 ### Integration Tests
 

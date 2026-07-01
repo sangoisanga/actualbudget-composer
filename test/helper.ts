@@ -1,12 +1,12 @@
-import { afterAll } from 'vitest'
-import Fastify from 'fastify'
-import appPlugin from '../src/app'
+import { afterAll } from 'vitest';
+import Fastify from 'fastify';
+import appPlugin from '../src/app.js';
 
 async function build() {
-  const fastify = Fastify()
-  await fastify.register(appPlugin)
-  afterAll(() => fastify.close())
-  return fastify
+  const fastify = Fastify();
+  await fastify.register(appPlugin);
+  afterAll(() => fastify.close());
+  return fastify;
 }
 
-export { build }
+export { build };
