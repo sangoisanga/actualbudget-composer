@@ -1,4 +1,5 @@
-providers = ["node"]
+[variables]
+NIXPACKS_NODE_VERSION = "22"
 
 [phases.setup]
 # Required by @actual-app/api → better-sqlite3 native C++ addon.
