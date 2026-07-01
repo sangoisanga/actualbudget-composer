@@ -25,6 +25,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@actual-app/api": "^26.6.0",
     "@fastify/autoload": "^6.0.0",
