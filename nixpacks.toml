@@ -1,4 +1,5 @@
-[phases.setup]
+providers = ["node"]
+
 # Required by @actual-app/api → better-sqlite3 native C++ addon.
 # Equivalent to the former Dockerfile's apk add python3 make g++.
 nixPkgs = ["python3", "gnumake", "gcc"]
