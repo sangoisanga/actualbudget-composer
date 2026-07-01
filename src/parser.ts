@@ -11,7 +11,7 @@ const RuleSchema = z.object({
 const RulesMatrixSchema = z.record(z.string(), RuleSchema)
 
 const rulesPath = join(process.cwd(), 'rules', 'rules.json')
-const rawRules = JSON.parse(readFileSync(rulesPath, 'utf-8'))
+const rawRules: unknown = JSON.parse(readFileSync(rulesPath, 'utf-8'))
 const activeRules = RulesMatrixSchema.parse(rawRules)
 
 export interface ParsedTransaction {
