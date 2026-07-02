@@ -22,11 +22,9 @@ export default app;
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const port = Number(process.env.PORT) || 3000;
-  const isProduction = process.env.NODE_ENV === 'production';
+  const pretty = process.env.LOG_PRETTY === 'true';
   const fastify = Fastify({
-    logger: isProduction
-      ? true
-      : { transport: { target: 'pino-pretty', options: { colorize: true } } },
+    logger: pretty ? { transport: { target: 'pino-pretty', options: { colorize: true } } } : true,
   });
   await fastify.register(app);
   await fastify.listen({ host: '::', port });
