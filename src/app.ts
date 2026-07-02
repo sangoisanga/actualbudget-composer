@@ -15,12 +15,12 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
   // those should be support plugins that are reused
   // through your application
   void fastify.register(AutoLoad, {
-    dir: join(__dirname, 'plugins'),
+    dir: join(import.meta.dirname, 'plugins'),
     options: opts,
   });
 
   void fastify.register(AutoLoad, {
-    dir: join(__dirname, 'routes'),
+    dir: join(import.meta.dirname, 'routes'),
     options: opts,
   });
 };
