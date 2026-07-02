@@ -11,7 +11,7 @@ const webhook: FastifyPluginCallback = (fastify, _opts) => {
     const rawEmail = req.body as string;
 
     fastify.log.info('Received webhook request');
-    fastify.log.debug({ rawEmail });
+    fastify.log.info({ rawEmail });
 
     return { status: 'synced' };
 
