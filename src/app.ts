@@ -1,29 +1,33 @@
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import Fastify from 'fastify';
 import AutoLoad, { type AutoloadPluginOptions } from '@fastify/autoload';
-import { type FastifyPluginAsync, type FastifyServerOptions } from 'fastify';
+import type { FastifyPluginAsync, FastifyServerOptions } from 'fastify';
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
-// Pass --options via CLI arguments in command to enable these options.
-const options: AppOptions = {};
 
-const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
-  // Place here your custom code!
-
-  // Do not touch the following lines
-
-  // This loads all plugins defined in plugins
-  // those should be support plugins that are reused
-  // through your application
-  void fastify.register(AutoLoad, {
+const app: FastifyPluginAsync<AppOptions> = async (fastify, opts) => {
+  await fastify.register(AutoLoad, {
     dir: join(import.meta.dirname, 'plugins'),
     options: opts,
   });
 
-  void fastify.register(AutoLoad, {
+  await fastify.register(AutoLoad, {
     dir: join(import.meta.dirname, 'routes'),
     options: opts,
   });
 };
 
 export default app;
-export { app, options };
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const port = Number(process.env.PORT) || 3000;
+  const isProduction = process.env.NODE_ENV === 'production';
+  const fastify = Fastify({
+    logger: isProduction
+      ? true
+      : { transport: { target: 'pino-pretty', options: { colorize: true } } },
+  });
+  await fastify.register(app);
+  await fastify.listen({ host: '::', port });
+}
