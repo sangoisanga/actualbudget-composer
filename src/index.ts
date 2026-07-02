@@ -1,12 +1,16 @@
+import fs from 'node:fs';
 import Fastify from 'fastify';
 import * as api from '@actual-app/api';
 import { parseTransaction } from './parser.js';
 
 const fastify = Fastify({ logger: true });
 
+const DATA_DIR = process.env.ACTUAL_DATA_DIR || '/app/data';
+
 async function initActual() {
+  await fs.promises.mkdir(DATA_DIR, { recursive: true });
   await api.init({
-    dataDir: '/app/data',
+    dataDir: DATA_DIR,
     serverURL: process.env.ACTUAL_SERVER_URL!,
     password: process.env.ACTUAL_PASSWORD!,
   });
