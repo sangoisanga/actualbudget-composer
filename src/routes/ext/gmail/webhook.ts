@@ -1,5 +1,4 @@
 import type { FastifyPluginCallback } from 'fastify';
-import { parseTransaction } from '../../../parser.js';
 
 function getSenderFromPayload(body: string): string {
   const match = body.match(/^From:\s*(.+@.+)$/im);
@@ -14,9 +13,11 @@ const webhook: FastifyPluginCallback = (fastify, _opts) => {
     fastify.log.info('Received webhook request');
     fastify.log.debug({ rawEmail });
 
+    return { status: 'synced' };
+
     try {
       const sender = getSenderFromPayload(rawEmail);
-      const tx = parseTransaction(rawEmail, sender);
+      const tx = fastify.parser.parse(rawEmail, sender);
       const centsAmount = Math.round(tx.amount * -100);
 
       await fastify.actual.addTransactions(fastify.actualAccountId, [
