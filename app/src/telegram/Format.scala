@@ -2,7 +2,8 @@ package composer.telegram
 
 import composer.domain.*
 
-import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.{Instant, LocalDate}
 import scala.scalajs.js
 
 object Format {
@@ -11,6 +12,7 @@ object Format {
   private val SubjectWidth = 38
   private val ReasonWidth = 52
   private val TelegramLimit = 4096
+  private val ClockFormat = DateTimeFormatter.ofPattern("HH:mm dd/MM")
 
   private val VerdictTags = Map(ImportVerdict.New -> "[N]", ImportVerdict.Updated -> "[U]", ImportVerdict.Duplicate -> "[=]")
 
@@ -43,6 +45,11 @@ object Format {
   }
 
   def fixCommand(failures: List[FailedEmail]): String = s"<code>/fix-mail ${failures.map(_.messageId).mkString(" ")}</code>"
+
+  def schedule(cron: Option[String], nextRun: Option[Instant]): String = (cron, nextRun) match {
+    case (Some(cron), Some(at)) => s"Scheduled poll runs on $cron (UTC+7). Next poll at ${at.atZone(BankZone).format(ClockFormat)}."
+    case _                      => "Scheduled poll is off. Send /cron 0 */6 * * * to set it."
+  }
 
   def accountPrompt(accountKey: Option[String], drafts: List[EntryDraft]): String = {
     val reason = accountKey.fold("The email does not show which account paid.")(key => s"The email shows ${escapeHtml(key)}, which has no account.")

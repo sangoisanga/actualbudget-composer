@@ -2,10 +2,8 @@ package composer
 
 import composer.adapters.actual.ActualConfig
 import composer.adapters.gmail.{GmailAuth, OAuthConfig}
-import composer.domain.PollInterval
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.duration.*
 import scala.scalajs.js
 
 final case class BotConfig(
@@ -15,7 +13,6 @@ final case class BotConfig(
     oauth: OAuthConfig,
     refreshToken: Option[String],
     lookbackDays: Int,
-    pollInterval: FiniteDuration,
     isDebug: Boolean,
     rulesDir: String
 )
@@ -41,13 +38,6 @@ private final class Env {
   def positiveInt(name: String, default: Int): Int = optional(name).fold(default) { value =>
     value.toIntOption.filter(_ > 0).getOrElse {
       problems += s"$name must be a positive integer"
-      default
-    }
-  }
-
-  def interval(name: String, default: FiniteDuration): FiniteDuration = optional(name).fold(default) { value =>
-    PollInterval.parse(value).getOrElse {
-      problems += s"$name must be hours or days, like 6h or 1d, up to ${PollInterval.show(PollInterval.Max)}"
       default
     }
   }
@@ -86,7 +76,6 @@ object Config {
         oauth(env),
         env.optional("GMAIL_REFRESH_TOKEN"),
         env.positiveInt("POLL_LOOKBACK_DAYS", 3),
-        env.interval("POLL_INTERVAL", 6.hours),
         env.isTrue("POLL_DEBUG"),
         env.required("RULES_DIR")
       )

@@ -57,7 +57,7 @@ The code is Scala 3 on Scala.js, built with Mill. It links to one ES module, `di
 - `-deprecation -feature -Wunused:all -Werror` in every module.
 - Direct style with `js.Promise`, `js.async`, and `js.await`. No effect library.
 - Scala libraries: upickle and scala-java-time. Tests: utest.
-- npm packages: `cheerio` parses email HTML, `grammy` runs the bot, `@googleapis/gmail` and `google-auth-library` read Gmail, `@actual-app/api` writes the budget.
+- npm packages: `cheerio` parses email HTML, `grammy` runs the bot, `@googleapis/gmail` and `google-auth-library` read Gmail, `@actual-app/api` writes the budget, `croner` runs the poll crontab.
 
 ## File map
 
@@ -68,7 +68,6 @@ domain/src/                          composer.domain: pure types and rules, no I
   PayeeMap.scala                     payee mapping and its decoder
   RuleCheck.scala                    RuleConfig, fixture snapshots, check-rules logic
   Report.scala                       EntryDraft, LedgerEntry, ImportVerdict, PollReport
-  PollInterval.scala                 parses and shows the poll interval (6h, 1d)
   html/Cheerio.scala                 the only JS facade in domain
 application/src/                     composer.application: use cases over ports, no JS facades
   Ports.scala                        Mailbox, Ledger, LedgerSession, Log
@@ -78,7 +77,8 @@ application/src/                     composer.application: use cases over ports,
   PollService.scala                  poll and pick state machine (private var of PollState)
 adapters/src/                        composer.adapters: port implementations
   facade/                            hand-written @js.native facades for npm and Node APIs
-  actual/  gmail/  sqlite/  log/     Ledger, Mailbox, BotStore (token and poll interval), JSON log
+  actual/  gmail/  sqlite/  log/     Ledger, Mailbox, BotStore (token and poll crontab), JSON log
+  schedule/CronJob.scala             checks a crontab and runs it in UTC+7 with croner
   telegram/Heartbeat.scala           getUpdates heartbeat and health check
   RuleFiles.scala                    loads rules.json and payees.json from RULES_DIR
 app/src/                             composer: entry points
@@ -122,7 +122,7 @@ The bot holds back entries with no known account. It shows inline account button
 
 `PollService` moves between `Idle`, `Polling`, and `AwaitingPicks`. A second poll gets `Busy` or `PicksPending`.
 
-`/auth` and `/cron` save the Gmail refresh token and the poll interval in `bot.sqlite` inside `ACTUAL_BUDGET_DATA_DIR`.
+`/auth` and `/cron` save the Gmail refresh token and the poll crontab in `bot.sqlite` inside `ACTUAL_BUDGET_DATA_DIR`.
 
 ## Domain facts
 
@@ -167,7 +167,7 @@ The bot holds back entries with no known account. It shows inline account button
 ### Read a new env var
 
 1. Add a field to the config case class in `app/src/Config.scala`.
-2. Read it with `env.required`, `env.optional`, `env.positiveInt`, `env.interval`, `env.isTrue`, or `env.long`. `env.checked` throws once with every problem.
+2. Read it with `env.required`, `env.optional`, `env.positiveInt`, `env.isTrue`, or `env.long`. `env.checked` throws once with every problem.
 3. Pass the value as a constructor argument from `BotApp` or `cli/Clis.scala`.
 4. Add the variable to `.env.example` with a one-line comment.
 
