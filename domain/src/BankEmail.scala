@@ -27,7 +27,9 @@ enum EmailRule {
       accountSelector: Option[String],
       accountMap: Map[String, String],
       accountDefault: Option[String],
-      accountChoices: List[String]
+      accountChoices: List[String],
+      transferSelector: Option[String],
+      transferMap: Map[String, String]
   )
 }
 
@@ -48,6 +50,7 @@ final case class ParsedEmail(
     categoryName: Option[String],
     account: AccountRef,
     accountKey: Option[String],
+    transferAccountId: Option[String],
     sender: String,
     ruleIndex: Int
 )
@@ -74,7 +77,9 @@ private final case class RuleJson(
     @key("account_selector") accountSelector: Option[String] = None,
     @key("account_map") accountMap: Map[String, String] = Map.empty,
     @key("account_default") accountDefault: Option[String] = None,
-    @key("account_choices") accountChoices: List[String] = Nil
+    @key("account_choices") accountChoices: List[String] = Nil,
+    @key("transfer_selector") transferSelector: Option[String] = None,
+    @key("transfer_map") transferMap: Map[String, String] = Map.empty
 ) derives ReadWriter
 
 object BankEmail {
@@ -102,7 +107,9 @@ object BankEmail {
         rule.accountSelector,
         rule.accountMap,
         rule.accountDefault,
-        rule.accountChoices
+        rule.accountChoices,
+        rule.transferSelector,
+        rule.transferMap
       )
     }
   }
@@ -133,7 +140,8 @@ object BankEmail {
       "date_selector" -> rule.dateSelector,
       "id_selector" -> rule.idSelector,
       "notes_selector" -> rule.notesSelector,
-      "account_selector" -> rule.accountSelector
+      "account_selector" -> rule.accountSelector,
+      "transfer_selector" -> rule.transferSelector
     ).collect { case (field, Some(selector)) => field -> selector }
 
   private def applyRule(document: CheerioDocument, rule: EmailRule, index: Int, sender: String): Option[ParseResult] = rule match {
@@ -147,10 +155,9 @@ object BankEmail {
 
   private def buildEmail(document: CheerioDocument, rule: EmailRule.Extract, index: Int, sender: String, rawAmount: String, payee: String): ParsedEmail = {
     val amount = Money.fromMajorUnits(Money.parseMajorUnits(rawAmount))
-    // A label reads "0900000001 - Tài khoản thanh toán": one phone number fronts several sub-accounts, so the full label maps first.
     val accountLabel = nonEmptyText(document, rule.accountSelector)
-    val accountKey = accountLabel.map(_.split(" - ").head.trim).filter(_.nonEmpty)
-    val mappedAccount = accountLabel.flatMap(rule.accountMap.get).orElse(accountKey.flatMap(rule.accountMap.get)).orElse(rule.accountDefault)
+    val accountKey = keyOf(accountLabel)
+    val mappedAccount = lookupAccount(rule.accountMap, accountLabel).orElse(rule.accountDefault)
     ParsedEmail(
       amount = if rule.amountSign == AmountSign.Explicit then amount else -amount.abs,
       payee = payee,
@@ -161,14 +168,23 @@ object BankEmail {
       categoryName = None,
       account = mappedAccount.fold(AccountRef.Unknown(accountKey, rule.accountChoices))(AccountRef.Known(_)),
       accountKey = accountKey,
+      transferAccountId = lookupAccount(rule.transferMap, nonEmptyText(document, rule.transferSelector)),
       sender = sender,
       ruleIndex = index
     )
   }
 
+  private def keyOf(label: Option[String]): Option[String] = label.map(_.split(" - ").head.trim).filter(_.nonEmpty)
+
+  // A label reads "0900000001 - Tài khoản thanh toán": one phone number fronts several sub-accounts, so the full label maps first.
+  private def lookupAccount(accountMap: Map[String, String], label: Option[String]): Option[String] = label.flatMap(accountMap.get).orElse(keyOf(label).flatMap(accountMap.get))
+
   private def textOf(document: CheerioDocument, selector: String): String = document(selector).text().trim
 
-  private def nonEmptyText(document: CheerioDocument, selector: Option[String]): Option[String] = selector.map(textOf(document, _)).filter(_.nonEmpty)
+  // Cake writes "n/a" when it does not know a value, for example the sender of a transfer from VPBank.
+  private val UnknownText = "n/a"
+
+  private def nonEmptyText(document: CheerioDocument, selector: Option[String]): Option[String] = selector.map(textOf(document, _)).filter(text => text.nonEmpty && !text.equalsIgnoreCase(UnknownText))
 
   private val DayMonthYear = """(\d{1,2})[/-](\d{1,2})[/-](\d{4})""".r.unanchored
 

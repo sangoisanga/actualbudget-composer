@@ -10,6 +10,7 @@ object ActualApi extends js.Object {
   def downloadBudget(syncId: String): js.Promise[Unit] = js.native
   def getCategories(): js.Promise[js.Array[NamedEntity]] = js.native
   def getAccounts(): js.Promise[js.Array[NamedEntity]] = js.native
+  def getPayees(): js.Promise[js.Array[Payee]] = js.native
   def importTransactions(accountId: String, transactions: js.Array[js.Object]): js.Promise[ImportResponse] = js.native
   def shutdown(): js.Promise[Unit] = js.native
 }
@@ -18,6 +19,12 @@ object ActualApi extends js.Object {
 trait NamedEntity extends js.Object {
   val id: String = js.native
   val name: String = js.native
+}
+
+@js.native
+trait Payee extends js.Object {
+  val id: String = js.native
+  val transfer_acct: js.UndefOr[String | Null] = js.native
 }
 
 @js.native

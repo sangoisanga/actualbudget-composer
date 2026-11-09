@@ -1,0 +1,12 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "200000",
+  "payee": "Chuyển tiền từ VPBank",
+  "raw_payee": "Chuyển tiền từ VPBank",
+  "date": "2026-11-07",
+  "reference": "900000014",
+  "notes": "NGUYEN VAN AN1000VND chuyen tien",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}

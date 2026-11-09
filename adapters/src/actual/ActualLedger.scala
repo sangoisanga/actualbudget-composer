@@ -1,6 +1,6 @@
 package composer.adapters.actual
 
-import composer.adapters.facade.{ActualApi, NodeFs, PreviewEntry}
+import composer.adapters.facade.{ActualApi, NodeFs, Payee, PreviewEntry}
 import composer.application.{Ledger, LedgerSession, Log}
 import composer.domain.{ImportVerdict, LedgerEntry}
 
@@ -15,7 +15,8 @@ object ActualLedger extends Ledger {
   def accountNames: js.Promise[Map[String, String]] = js.async(js.await(ActualApi.getAccounts()).map(account => account.id -> account.name).toMap)
 
   def importBatch(accountId: String, entries: List[LedgerEntry]): js.Promise[Map[String, ImportVerdict]] = js.async {
-    val response = js.await(ActualApi.importTransactions(accountId, entries.map(toTransaction).toJSArray))
+    val transferPayees = transferPayeesOf(js.await(ActualApi.getPayees()).toList)
+    val response = js.await(ActualApi.importTransactions(accountId, entries.map(toTransaction(_, transferPayees)).toJSArray))
     val errors = response.errors.getOrElse(js.Array()).map(_.message)
     if errors.nonEmpty then throw RuntimeException(errors.mkString("; "))
     verdictsOf(response.updatedPreview.getOrElse(js.Array()).toList)
@@ -28,12 +29,16 @@ object ActualLedger extends Ledger {
       entry.transaction.imported_id.toOption.map(_ -> verdict)
     }.toMap
 
-  private def toTransaction(entry: LedgerEntry): js.Object = {
+  def transferPayeesOf(payees: List[Payee]): Map[String, String] = payees.flatMap(payee => payee.transfer_acct.toOption.flatMap(Option(_)).map(_ -> payee.id)).toMap
+
+  // Actual creates and links the other side of a transfer only when the payee is the transfer payee of that account.
+  private def toTransaction(entry: LedgerEntry, transferPayees: Map[String, String]): js.Object = {
     val draft = entry.draft
     js.Dynamic.literal(
       account = entry.accountId,
       date = draft.date.toString,
       amount = draft.amount.minorUnits.toDouble,
+      payee = draft.transferAccountId.map(transferPayeeOf(transferPayees, _)).orUndefined,
       payee_name = draft.payee,
       imported_payee = draft.importedPayee,
       imported_id = draft.importedId,
@@ -42,6 +47,9 @@ object ActualLedger extends Ledger {
       category = draft.categoryId.orUndefined
     )
   }
+
+  private def transferPayeeOf(transferPayees: Map[String, String], accountId: String): String =
+    transferPayees.getOrElse(accountId, throw IllegalArgumentException(s"Account $accountId has no transfer payee. Check transfer_map in rules.json."))
 }
 
 final class ActualSession(config: ActualConfig) extends LedgerSession {

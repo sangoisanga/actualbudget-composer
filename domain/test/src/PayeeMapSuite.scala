@@ -16,7 +16,7 @@ object PayeeMapSuite extends TestSuite {
   )
 
   private def email(payee: String, notes: Option[String] = None) =
-    ParsedEmail(Money.zero, payee, payee, None, None, notes, None, AccountRef.Unknown(None, Nil), None, "no-reply@cake.vn", 0)
+    ParsedEmail(Money.zero, payee, payee, None, None, notes, None, AccountRef.Unknown(None, Nil), None, None, "no-reply@cake.vn", 0)
 
   val tests = Tests {
     test("maps a noisy raw payee to the canonical name and replaces the note") {

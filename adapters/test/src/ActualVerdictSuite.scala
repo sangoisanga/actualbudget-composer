@@ -1,7 +1,7 @@
 package composer.adapters
 
 import composer.adapters.actual.ActualLedger
-import composer.adapters.facade.PreviewEntry
+import composer.adapters.facade.{Payee, PreviewEntry}
 import composer.domain.ImportVerdict
 import utest.*
 
@@ -18,6 +18,15 @@ object ActualVerdictSuite extends TestSuite {
     test("maps updatedPreview entries to verdicts by imported ID") {
       val verdicts = ActualLedger.verdictsOf(List(preview("b", ignored = true), preview("c", existing = true), preview("d")))
       verdicts ==> Map("b" -> ImportVerdict.Duplicate, "c" -> ImportVerdict.Updated, "d" -> ImportVerdict.New)
+    }
+
+    test("maps each account to its transfer payee and skips plain payees") {
+      val payees = List(
+        js.Dynamic.literal(id = "payee-cake", transfer_acct = "acct-cake"),
+        js.Dynamic.literal(id = "payee-grab", transfer_acct = null),
+        js.Dynamic.literal(id = "payee-be")
+      ).map(_.asInstanceOf[Payee])
+      ActualLedger.transferPayeesOf(payees) ==> Map("acct-cake" -> "payee-cake")
     }
   }
 }

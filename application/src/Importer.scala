@@ -9,7 +9,9 @@ final case class ImportResult(rows: List[ImportedRow], failedImports: Int)
 object Importer {
   // One batch per account: the reconciler tracks matches inside a batch, so equal amounts in one poll do not shadow each other.
   def importAll(ledger: Ledger, entries: List[LedgerEntry], log: Log): js.Promise[ImportResult] = js.async {
-    val results = js.await(Async.traverse(entries.groupBy(_.accountId).toList)((accountId, batch) => importBatch(ledger, accountId, batch, log)))
+    // Actual creates the receiving row of a transfer, so the receiving email in this poll must import after it to match that row.
+    val batches = entries.groupBy(_.accountId).toList.sortBy((_, batch) => !batch.exists(_.draft.transferAccountId.isDefined))
+    val results = js.await(Async.traverse(batches)((accountId, batch) => importBatch(ledger, accountId, batch, log)))
     ImportResult(results.flatMap(_.rows), results.map(_.failedImports).sum)
   }
 

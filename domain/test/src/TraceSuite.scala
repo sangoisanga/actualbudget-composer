@@ -16,6 +16,11 @@ object TraceSuite extends TestSuite {
       assert(traces.flatMap(_.selectors).exists(selector => selector.field == "amount_selector" && selector.text.nonEmpty))
     }
 
+    test("shows the credit account that a VPBank rule finds") {
+      val traces = BankEmail.trace(rules, Fixtures.example("vpbank-transfer.html"), "vpbankonline@vpb.com.vn")
+      assert(traces.flatMap(_.selectors).exists(selector => selector.field == "transfer_selector" && selector.text == "0900000001"))
+    }
+
     test("returns no traces for an unknown sender") {
       BankEmail.trace(rules, "<p></p>", "unknown@example.com") ==> Nil
     }

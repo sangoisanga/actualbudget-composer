@@ -5,7 +5,7 @@ import utest.*
 
 object RuleCheckSuite extends TestSuite {
   private val bank = "bank@example.com"
-  private val payment = EmailRule.Extract(".amount", ".payee", None, None, None, None, AmountSign.Expense, None, Map.empty, None, Nil)
+  private val payment = EmailRule.Extract(".amount", ".payee", None, None, None, None, AmountSign.Expense, None, Map.empty, None, Nil, None, Map.empty)
   private val config = RuleConfig(Map(bank -> List(EmailRule.Ignore(".skip"), payment)), List(PayeeMapping(List("grab"), "Grab")))
   private val paymentHtml = """<p class="amount">50.000 đ</p><p class="payee">GRAB VN</p>"""
   private val skipHtml = """<p class="skip">x</p>"""

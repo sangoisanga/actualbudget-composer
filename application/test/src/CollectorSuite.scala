@@ -44,8 +44,14 @@ object CollectorSuite extends AsyncSuite {
 
     test("builds an entry with the extracted fields") {
       collect(List(email("a"))).map { collected =>
-        collected.ready ==> List(EntryDraft(LocalDate.of(2026, 8, 18), Money.fromMinorUnits(-5000000), "Gong Cha Tea", "Gong Cha Tea", "CAKE123", None, None).assignTo("acct1"))
+        collected.ready ==> List(EntryDraft(LocalDate.of(2026, 8, 18), Money.fromMinorUnits(-5000000), "Gong Cha Tea", "Gong Cha Tea", "CAKE123", None, None, None).assignTo("acct1"))
       }
+    }
+
+    test("carries the transfer account to the entry") {
+      val transfers = Map(cake -> List(rule(transferSelector = Some(".credit-account"), transferMap = Map("0900000002" -> "acct-cake"))))
+      val html = """<html><span class="amount-value">50.000 đ</span><span class="payee-name">X</span><span class="credit-account">0900000002</span></html>"""
+      collect(List(email("a", html)), settings(transfers)).map(collected => collected.ready.head.draft.transferAccountId ==> Some("acct-cake"))
     }
 
     test("uses the Gmail message ID and the header date when the email has none") {

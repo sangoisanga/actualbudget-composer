@@ -64,7 +64,8 @@ object Collector {
       importedPayee = parsed.rawPayee,
       importedId = parsed.reference.getOrElse(id),
       notes = parsed.notes,
-      categoryId = parsed.categoryName.flatMap(settings.categoryIds.get)
+      categoryId = parsed.categoryName.flatMap(settings.categoryIds.get),
+      transferAccountId = parsed.transferAccountId
     )
     (parsed.account, settings.fallbackAccountId) match {
       case (AccountRef.Known(accountId), _)           => Outcome.Ready(draft.assignTo(accountId))
