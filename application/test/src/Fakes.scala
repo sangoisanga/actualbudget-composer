@@ -14,8 +14,8 @@ object Fakes {
 
   val htmlMinimal = """<html><span class="amount-value">20.000 đ</span><span class="payee-name">Grab</span></html>"""
 
-  def rule(dateSelector: Option[String] = None, idSelector: Option[String] = None, accountSelector: Option[String] = None, accountMap: Map[String, String] = Map.empty, accountChoices: List[String] = Nil): EmailRule.Extract =
-    EmailRule.Extract(".amount-value", ".payee-name", None, dateSelector, idSelector, None, AmountSign.Expense, accountSelector, accountMap, None, accountChoices)
+  def rule(dateSelector: Option[String] = None, idSelector: Option[String] = None, accountSelector: Option[String] = None, accountMap: Map[String, String] = Map.empty, accountChoices: List[String] = Nil, transferSelector: Option[String] = None, transferMap: Map[String, String] = Map.empty): EmailRule.Extract =
+    EmailRule.Extract(".amount-value", ".payee-name", None, dateSelector, idSelector, None, AmountSign.Expense, accountSelector, accountMap, None, accountChoices, transferSelector, transferMap)
 
   val rules: RuleMatrix = Map(cake -> List(rule(Some(".transaction-date"), Some(".transaction-id"))))
 

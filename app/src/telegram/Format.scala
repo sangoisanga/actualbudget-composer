@@ -110,9 +110,11 @@ object Format {
       Option.when(count > 0)(s"$count $label")
     }
     val failures = Option.when(report.failures.nonEmpty)((s"<b>${report.failures.size} failed to parse</b>" :: report.failures.map(failureLine)) :+ fixCommand(report.failures))
+    val transfers = report.rows.count(_.entry.draft.transferAccountId.isDefined)
     List(
       verdictCounts.mkString(" · "),
       escapeHtml(accountBreakdown(report.rows.map(_.entry), accountNames)),
+      if transfers > 0 then s"$transfers transfer(s) to your own accounts" else "",
       if report.scanned.isEmpty && report.unresolved > 0 then s"${report.unresolved} awaiting an account" else "",
       if report.failedImports > 0 then s"<b>${report.failedImports} failed to import</b>. See the log." else "",
       failures.fold("")(_.mkString("\n"))

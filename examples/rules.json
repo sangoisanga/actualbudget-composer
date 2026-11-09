@@ -60,6 +60,18 @@
     {
       "amount_sign": "explicit",
       "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Loại giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"]):contains(\"Chuyển tiền từ VPBank\")",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_selector": "tr:has(> td:contains(\"Tài khoản nhận\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "0900000001 - Tài khoản thanh toán": "00000000-0000-4000-8000-000000000002"
+      }
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
       "payee_selector": "tr:has(> td:contains(\"Nhà cung cấp\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
       "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
       "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
@@ -140,6 +152,10 @@
       "account_selector": "td:contains(\"Tài khoản trích nợ\") + td",
       "account_map": {
         "0900000001": "00000000-0000-4000-8000-000000000004"
+      },
+      "transfer_selector": "td:contains(\"Tài khoản ghi có\") + td",
+      "transfer_map": {
+        "0900000001": "00000000-0000-4000-8000-000000000002"
       }
     },
     {

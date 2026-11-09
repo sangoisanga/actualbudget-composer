@@ -39,6 +39,14 @@ flowchart TD
 
 Each transaction gets the bank reference as its ID. A second import of the same email updates the transaction and does not add a copy.
 
+## Transfers between your accounts
+
+A rule can read the account that receives the money with `transfer_selector`. Map that account to an Actual account in `transfer_map`. The tool then imports the row as an Actual transfer, and Actual adds the linked row in the receiving account.
+
+When the receiving bank also sends an email, the tool matches it to that linked row. The summary shows it as `[U]`.
+
+If the receiving email arrives in an earlier poll than the sending email, the receiving account gets two rows. Delete the plain row by hand.
+
 ## Poll states
 
 ```mermaid

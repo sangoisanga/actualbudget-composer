@@ -8,8 +8,8 @@ import java.time.{Instant, LocalDate}
 object FormatSuite extends TestSuite {
   private val accountNames = Map("acct-1" -> "Cake card", "acct-2" -> "Cake OD")
 
-  private def draft(payee: String = "Be", date: String = "2026-08-18", importedId: String = "msg-1", notes: Option[String] = None) =
-    EntryDraft(LocalDate.parse(date), Money.fromMinorUnits(-1200000), payee, payee, importedId, notes, None)
+  private def draft(payee: String = "Be", date: String = "2026-08-18", importedId: String = "msg-1", notes: Option[String] = None, transferAccountId: Option[String] = None) =
+    EntryDraft(LocalDate.parse(date), Money.fromMinorUnits(-1200000), payee, payee, importedId, notes, None, transferAccountId)
 
   private def row(draft: EntryDraft = this.draft(), accountId: String = "acct-1", verdict: ImportVerdict = ImportVerdict.New) = ImportedRow(draft.assignTo(accountId), verdict)
 
@@ -92,6 +92,11 @@ object FormatSuite extends TestSuite {
     test("counts the rows by verdict") {
       val rows = List(row(verdict = ImportVerdict.New), row(verdict = ImportVerdict.Updated), row(verdict = ImportVerdict.Duplicate))
       assert(message(report(rows)).contains("1 new · 1 updated · 1 duplicate"))
+    }
+
+    test("counts the transfers to your own accounts") {
+      val text = message(report(List(row(draft(transferAccountId = Some("acct-2"))), row())))
+      assert(text.contains("1 transfer(s) to your own accounts"))
     }
 
     test("lists every failure with its reason") {

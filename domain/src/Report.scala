@@ -6,7 +6,16 @@ enum ImportVerdict {
   case New, Updated, Duplicate
 }
 
-final case class EntryDraft(date: LocalDate, amount: Money, payee: String, importedPayee: String, importedId: String, notes: Option[String], categoryId: Option[String]) {
+final case class EntryDraft(
+    date: LocalDate,
+    amount: Money,
+    payee: String,
+    importedPayee: String,
+    importedId: String,
+    notes: Option[String],
+    categoryId: Option[String],
+    transferAccountId: Option[String]
+) {
   def assignTo(accountId: String): LedgerEntry = LedgerEntry(accountId, this)
 }
 

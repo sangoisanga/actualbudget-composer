@@ -21,6 +21,7 @@ final case class FixtureSnapshot(
     category: Option[String] = None,
     @key("account_key") accountKey: Option[String] = None,
     @key("account_id") accountId: Option[String] = None,
+    @key("transfer_account_id") transferAccountId: Option[String] = None,
     error: Option[String] = None
 ) derives ReadWriter
 
@@ -63,7 +64,8 @@ object RuleCheck {
         notes = email.notes,
         category = email.categoryName,
         accountKey = email.accountKey,
-        accountId = knownAccountId(email.account)
+        accountId = knownAccountId(email.account),
+        transferAccountId = email.transferAccountId
       )
     case ParseResult.Ignored(_)           => FixtureSnapshot(sender, FixtureOutcome.Ignored)
     case ParseResult.Unrecognized(reason) => FixtureSnapshot(sender, FixtureOutcome.Unrecognized, error = Some(reason))

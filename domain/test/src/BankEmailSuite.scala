@@ -7,8 +7,10 @@ import java.time.LocalDate
 object BankEmailSuite extends TestSuite {
   private val cake = "no-reply@cake.vn"
 
-  private def extract(dateSelector: Option[String] = None, idSelector: Option[String] = None, notesSelector: Option[String] = None, accountSelector: Option[String] = None, accountMap: Map[String, String] = Map.empty) =
-    EmailRule.Extract(".amount-value", ".payee-name", None, dateSelector, idSelector, notesSelector, AmountSign.Expense, accountSelector, accountMap, None, Nil)
+  private def extract(dateSelector: Option[String] = None, idSelector: Option[String] = None, notesSelector: Option[String] = None, accountSelector: Option[String] = None, accountMap: Map[String, String] = Map.empty, transferSelector: Option[String] = None, transferMap: Map[String, String] = Map.empty, payeeDefault: Option[String] = None) =
+    EmailRule.Extract(".amount-value", ".payee-name", payeeDefault, dateSelector, idSelector, notesSelector, AmountSign.Expense, accountSelector, accountMap, None, Nil, transferSelector, transferMap)
+
+  private val transferHtml = """<html><span class="amount-value">3,000,000 VND</span><span class="payee-name">NGUYEN VAN AN</span><span class="credit-account">0900000002</span></html>"""
 
   private val fullRule = extract(Some(".transaction-date"), Some(".transaction-id"), Some(".transaction-notes"), Some(".account-id"), Map("••1111" -> "acct-card"))
   private val cakeRules: RuleMatrix = Map(cake -> List(fullRule))
@@ -40,6 +42,29 @@ object BankEmailSuite extends TestSuite {
       (email.amount, email.payee) ==> (Money.fromMajorUnits(-50000), "Gong Cha Tea")
       (email.date, email.reference, email.notes, email.accountKey) ==> (None, None, None, None)
       email.account ==> AccountRef.Unknown(None, Nil)
+      email.transferAccountId ==> None
+    }
+
+    test("maps the credit account to a transfer account") {
+      val rule = extract(transferSelector = Some(".credit-account"), transferMap = Map("0900000002" -> "acct-cake"))
+      parsed(Map(cake -> List(rule)), transferHtml).transferAccountId ==> Some("acct-cake")
+    }
+
+    test("uses the payee default when the bank writes n/a") {
+      val html = """<html><span class="amount-value">200.000 đ</span><span class="payee-name">n/a</span><span class="account-id">N/A</span></html>"""
+      val rule = extract(accountSelector = Some(".account-id"), payeeDefault = Some("Chuyển tiền đến"))
+      val email = parsed(Map(cake -> List(rule)), html)
+      (email.payee, email.accountKey) ==> ("Chuyển tiền đến", None)
+    }
+
+    test("skips a rule when the payee is n/a and the rule has no default") {
+      val html = """<html><span class="amount-value">200.000 đ</span><span class="payee-name">n/a</span></html>"""
+      BankEmail.parse(Map(cake -> List(extract())), html, cake) ==> ParseResult.Unrecognized(s"No rule matched this email from $cake")
+    }
+
+    test("leaves the transfer account empty when the credit account has no mapping") {
+      val rule = extract(transferSelector = Some(".credit-account"), transferMap = Map("0900000009" -> "acct-cake"))
+      parsed(Map(cake -> List(rule)), transferHtml).transferAccountId ==> None
     }
 
     test("parses an ISO date") {
@@ -64,8 +89,8 @@ object BankEmailSuite extends TestSuite {
     }
 
     test("decodes snake_case rule keys") {
-      val json = s"""{"$cake": [{"amount_selector": ".amount-value", "payee_selector": ".payee-name", "amount_sign": "explicit", "account_map": {"••1111": "acct-card"}}]}"""
-      val expected = EmailRule.Extract(".amount-value", ".payee-name", None, None, None, None, AmountSign.Explicit, None, Map("••1111" -> "acct-card"), None, Nil)
+      val json = s"""{"$cake": [{"amount_selector": ".amount-value", "payee_selector": ".payee-name", "amount_sign": "explicit", "account_map": {"••1111": "acct-card"}, "transfer_selector": ".credit-account", "transfer_map": {"0900000002": "acct-cake"}}]}"""
+      val expected = EmailRule.Extract(".amount-value", ".payee-name", None, None, None, None, AmountSign.Explicit, None, Map("••1111" -> "acct-card"), None, Nil, Some(".credit-account"), Map("0900000002" -> "acct-cake"))
       BankEmail.decodeRules(json) ==> Map(cake -> List(expected))
     }
 

@@ -129,6 +129,7 @@ The bot holds back entries with no known account. It shows inline account button
 - **Idempotency**: `imported_id` is the bank reference, or the Gmail message ID when the email has none. A second import updates the row and adds no copy.
 - **Amounts**: `Money.parseMajorUnits` finds the separators from the digits. A negative amount is money out.
 - **Failures**: each email that no rule matches becomes a `FailedEmail`. The bot shows it as a Gmail link. The report ends with one `/fix-mail <id>...` line.
+- **Transfers**: a row with a `transfer_map` match gets the transfer payee of the receiving account. Actual creates and links the receiving row. `Importer` imports the sending batch first, so the receiving email in the same poll matches that row as `Updated`.
 - **Gmail `invalid_grant`**: the refresh token is not valid. The user runs `npm run auth:gmail` or sends `/auth` to the bot.
 
 ## Rule files
@@ -139,7 +140,7 @@ The bot holds back entries with no known account. It shows inline account button
 | ------------------ | -------- | ------------------------------------------------------------------------- |
 | `amount_selector`  | Yes      | CSS selector for the amount.                                              |
 | `payee_selector`   | Yes      | CSS selector for the payee.                                               |
-| `payee_default`    | No       | Payee to use when `payee_selector` finds no text.                         |
+| `payee_default`    | No       | Payee to use when `payee_selector` finds no text or only `n/a`.           |
 | `date_selector`    | No       | CSS selector for the date.                                                |
 | `id_selector`      | No       | CSS selector for the bank reference. It becomes `imported_id`.            |
 | `notes_selector`   | No       | CSS selector for the notes.                                               |
@@ -148,6 +149,8 @@ The bot holds back entries with no known account. It shows inline account button
 | `account_map`      | No       | Maps the account value to an Actual account ID.                           |
 | `account_default`  | No       | Account ID when the map has no match, or when there is no selector.       |
 | `account_choices`  | No       | Account IDs for the bot buttons when the account is not known.            |
+| `transfer_selector` | No      | CSS selector for the account that receives the money.                     |
+| `transfer_map`     | No       | Maps the receiving account to an Actual account ID. A match imports a transfer. |
 
 - An ignore rule has the shape `{ "ignore": true, "match_selector": "..." }`. It marks a template that moves no money. Put ignore rules first.
 - `payees.json` is an ordered list of `{ match, payee, note?, category? }`. The first match wins. `imported_payee` keeps the raw string.

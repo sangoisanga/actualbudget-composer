@@ -8,8 +8,8 @@ import java.time.LocalDate
 import scala.scalajs.js
 
 object ImporterSuite extends AsyncSuite {
-  private def entry(importedId: String, accountId: String = "acct1") =
-    EntryDraft(LocalDate.of(2026, 8, 18), Money.fromMinorUnits(-5000000), "Gong Cha Tea", "Gong Cha Tea", importedId, None, None).assignTo(accountId)
+  private def entry(importedId: String, accountId: String = "acct1", transferAccountId: Option[String] = None) =
+    EntryDraft(LocalDate.of(2026, 8, 18), Money.fromMinorUnits(-5000000), "Gong Cha Tea", "Gong Cha Tea", importedId, None, None, transferAccountId).assignTo(accountId)
 
   private def importAll(ledger: FakeLedger, entries: List[LedgerEntry]) = Importer.importAll(ledger, entries, NoLog)
 
@@ -37,6 +37,13 @@ object ImporterSuite extends AsyncSuite {
       val ledger = FakeLedger()
       importAll(ledger, List(entry("a"), entry("b"), entry("c", "acct2"))).map { _ =>
         ledger.batches.toList.map((accountId, entries) => accountId -> entries.size).sorted ==> List("acct1" -> 2, "acct2" -> 1)
+      }
+    }
+
+    test("imports a batch with a transfer before the receiving account") {
+      val ledger = FakeLedger()
+      importAll(ledger, List(entry("in", "acct-cake"), entry("out", "acct-vpbank", Some("acct-cake")))).map { _ =>
+        ledger.batches.toList.map(_._1) ==> List("acct-vpbank", "acct-cake")
       }
     }
 
