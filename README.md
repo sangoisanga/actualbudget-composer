@@ -98,7 +98,7 @@ The bot answers only the chat in `TELEGRAM_ALLOWED_CHAT_ID`. Each write goes to 
 | `/poll [days]`     | Import new transactions and reply with a summary.                                 |
 | `/status`          | Show the transactions that wait for an account.                                   |
 | `/cancel`          | Drop the transactions that wait for an account.                                   |
-| `/cron [interval]` | Show or set the poll interval, like `6h` or `1d`, up to `7d`. The value persists. |
+| `/cron [expr \| off]` | Show, set, or turn off the poll crontab, like `0 */6 * * *`, in UTC+7. The value persists. With no value, the scheduled poll is off. The reply shows the next poll time. |
 | `/auth [url]`      | Rotate the Gmail refresh token without a restart.                                 |
 
 The summary shows the counts and one line for each transaction. A scheduled poll sends a message only when something changed or failed.

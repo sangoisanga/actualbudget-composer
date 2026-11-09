@@ -3,9 +3,9 @@ package composer.telegram
 import composer.BotConfig
 import composer.adapters.facade.{Bot, BotContext, InlineKeyboard}
 import composer.adapters.gmail.{GmailAuth, GmailMailbox}
+import composer.adapters.schedule.CronJob
 import composer.adapters.sqlite.BotStore
 import composer.application.*
-import composer.domain.PollInterval
 
 import scala.scalajs.js
 
@@ -67,14 +67,18 @@ final class Commands(config: BotConfig, service: PollService, mailbox: GmailMail
   }
 
   def cron(context: BotContext): js.Promise[Unit] = argument(context) match {
-    case ""   => reply(context, s"Scheduled poll runs every ${PollInterval.show(schedule.interval)}.")
+    case ""    => reply(context, Format.schedule(schedule.current, schedule.nextRunAt))
+    case "off" =>
+      store.clearPollCron()
+      schedule.restart(None)
+      reply(context, Format.schedule(None, None))
     case text =>
-      PollInterval.parse(text) match {
-        case None           => reply(context, s"Send /cron followed by hours or days, like 6h or 1d, up to ${PollInterval.show(PollInterval.Max)}.")
-        case Some(interval) =>
-          store.savePollIntervalHours(interval.toHours.toInt)
-          schedule.restart(interval)
-          reply(context, s"Scheduled poll now runs every ${PollInterval.show(interval)}.")
+      CronJob.check(text) match {
+        case Left(reason) => reply(context, s"$reason Send /cron followed by 5 fields, like /cron 0 */6 * * *, or /cron off.")
+        case Right(cron)  =>
+          store.savePollCron(cron)
+          schedule.restart(Some(cron))
+          reply(context, Format.schedule(schedule.current, schedule.nextRunAt))
       }
   }
 
@@ -108,7 +112,7 @@ object Commands {
     "poll" -> "Import new transactions from Gmail. Optional: days to look back",
     "status" -> "Show transactions that wait for an account",
     "cancel" -> "Drop transactions that wait for an account",
-    "cron" -> "Show or set the poll interval, like 6h or 1d",
+    "cron" -> "Show, set, or turn off the poll crontab, like 0 */6 * * *",
     "auth" -> "Rotate the Gmail token. Optional: callback URL"
   )
 

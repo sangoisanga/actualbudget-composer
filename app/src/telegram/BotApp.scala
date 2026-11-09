@@ -6,10 +6,10 @@ import composer.adapters.actual.ActualSession
 import composer.adapters.facade.{Bot, BotContext, NodeFs}
 import composer.adapters.gmail.{GmailCredentials, GmailMailbox}
 import composer.adapters.log.JsonLog
+import composer.adapters.schedule.CronJob
 import composer.adapters.sqlite.BotStore
 import composer.adapters.telegram.Heartbeat
 import composer.application.{Async, Log, PollConfig, PollService}
-import composer.domain.PollInterval
 
 import scala.concurrent.duration.*
 import scala.scalajs.js
@@ -31,7 +31,8 @@ object BotApp {
     val sendToChat = (text: String, options: js.UndefOr[js.Object]) => js.async(js.await(bot.api.sendMessage(config.allowedChatId.toDouble, text, options)): Unit)
     val notifyExpired = (dropped: Int) => if dropped == 0 then js.Promise.resolve(()) else sendToChat(s"Dropped $dropped transaction(s) that still needed an account after 15 minutes.", js.undefined)
     val service = PollService(ActualSession(config.actual), mailbox, PollConfig(files.rules, files.payees), log, notifyExpired)
-    val schedule = ScheduledPoll(service, sendToChat, config.lookbackDays, log, store.pollIntervalHours.map(_.hours).getOrElse(config.pollInterval))
+    val savedCron = store.pollCron.flatMap(text => CronJob.check(text).fold(reason => { log.error(s"Saved poll cron is not valid: $reason"); None }, Some(_)))
+    val schedule = ScheduledPoll(service, sendToChat, config.lookbackDays, log, savedCron)
 
     var lastPollAt = js.Date.now().toLong
     bot.api.config.use(Heartbeat.trackPolls { () =>
@@ -41,8 +42,9 @@ object BotApp {
     })
     Commands.register(bot, Commands(config, service, mailbox, store, schedule), config.allowedChatId, guard(log))
     js.await(bot.api.setMyCommands(Commands.all.map((name, description) => js.Dynamic.literal(command = name, description = description): js.Object).toJSArray))
-    log.info("Telegram bot started", "poll_interval" -> PollInterval.show(schedule.interval))
+    log.info("Telegram bot started", "poll_cron" -> schedule.current.getOrElse("off"))
     schedule.start()
+    js.await(sendToChat(Format.schedule(schedule.current, schedule.nextRunAt), js.undefined))
 
     // The first stop signal wins. A promise ignores every later resolve call.
     var stop: Int => Unit = _ => ()

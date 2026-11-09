@@ -1,31 +1,39 @@
 package composer.telegram
 
+import composer.adapters.schedule.CronJob
 import composer.application.{Async, Log, PollService, PollStart}
 
-import scala.concurrent.duration.FiniteDuration
+import java.time.Instant
 import scala.scalajs.js
-import scala.scalajs.js.timers.{SetIntervalHandle, clearInterval, setInterval}
 
-final class ScheduledPoll(service: PollService, send: (String, js.UndefOr[js.Object]) => js.Promise[Unit], lookbackDays: Int, log: Log, initialInterval: FiniteDuration) {
+final class ScheduledPoll(service: PollService, send: (String, js.UndefOr[js.Object]) => js.Promise[Unit], lookbackDays: Int, log: Log, initialCron: Option[String]) {
   private val html = js.Dynamic.literal(parse_mode = "HTML")
-  private var every = initialInterval
-  private var timer: Option[SetIntervalHandle] = None
+  private var cron = initialCron
+  private var job: Option[CronJob] = None
   private var reportedFailureIds = Set.empty[String]
   private var lastError: Option[String] = None
 
-  def interval: FiniteDuration = every
+  def current: Option[String] = cron
 
-  def start(): Unit = timer = Some(setInterval(every)(Async.runAndLog(tick(), log, "Scheduled poll")))
+  def nextRunAt: Option[Instant] = job.flatMap(_.nextRun)
 
-  def restart(next: FiniteDuration): Unit = {
+  def start(): Unit = job = cron.map(CronJob.start(_, () => tickAndLog()))
+
+  def restart(next: Option[String]): Unit = {
     stop()
-    every = next
+    cron = next
     start()
   }
 
   def stop(): Unit = {
-    timer.foreach(clearInterval)
-    timer = None
+    job.foreach(_.stop())
+    job = None
+  }
+
+  // croner waits on this promise to block an overlapping run, so it must never reject.
+  private def tickAndLog(): js.Promise[Unit] = js.async {
+    try js.await(tick())
+    catch { case error: Throwable => log.error(s"Scheduled poll failed: ${Async.messageOf(error)}") }
   }
 
   private def tick(): js.Promise[Unit] = js.async {

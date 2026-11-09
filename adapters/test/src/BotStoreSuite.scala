@@ -15,9 +15,9 @@ object BotStoreSuite extends TestSuite {
     store.refreshToken
   }
 
-  private def savedInterval(saves: Int*): Option[Int] = withStore { store =>
-    saves.foreach(store.savePollIntervalHours)
-    store.pollIntervalHours
+  private def savedCron(saves: String*): Option[String] = withStore { store =>
+    saves.foreach(store.savePollCron)
+    store.pollCron
   }
 
   val tests = Tests {
@@ -27,16 +27,23 @@ object BotStoreSuite extends TestSuite {
       test("replaces the earlier token") { savedToken("token-1", "token-2") ==> Some("token-2") }
     }
 
-    test("poll interval") {
-      test("returns nothing when empty") { savedInterval() ==> None }
-      test("returns the saved hours") { savedInterval(6) ==> Some(6) }
-      test("replaces the earlier hours") { savedInterval(6, 24) ==> Some(24) }
+    test("poll cron") {
+      test("returns nothing when empty") { savedCron() ==> None }
+      test("returns the saved cron") { savedCron("0 */6 * * *") ==> Some("0 */6 * * *") }
+      test("replaces the earlier cron") { savedCron("0 */6 * * *", "30 8 * * 1-5") ==> Some("30 8 * * 1-5") }
+      test("returns nothing after a clear") {
+        withStore { store =>
+          store.savePollCron("0 */6 * * *")
+          store.clearPollCron()
+          store.pollCron ==> None
+        }
+      }
     }
 
-    test("keeps the token after an interval save") {
+    test("keeps the token after a cron save") {
       withStore { store =>
         store.saveRefreshToken("token-1")
-        store.savePollIntervalHours(6)
+        store.savePollCron("0 */6 * * *")
         store.refreshToken ==> Some("token-1")
       }
     }

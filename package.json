@@ -41,6 +41,7 @@
     "@actual-app/api": "^26.9.0",
     "@googleapis/gmail": "^22.0.1",
     "cheerio": "^1.2.0",
+    "croner": "11.0.0",
     "google-auth-library": "^11.1.0",
     "grammy": "^1.45.1"
   }

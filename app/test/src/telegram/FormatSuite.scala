@@ -3,7 +3,7 @@ package composer.telegram
 import composer.domain.*
 import utest.*
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 
 object FormatSuite extends TestSuite {
   private val accountNames = Map("acct-1" -> "Cake card", "acct-2" -> "Cake OD")
@@ -179,6 +179,13 @@ object FormatSuite extends TestSuite {
       test("reports a failed import batch with no rows") {
         assert(scheduled(PollReport(Nil, Nil, 1, 0, None, 0)).head.contains("failed to import"))
       }
+    }
+
+    test("schedule") {
+      test("on shows the next poll in BankZone") {
+        Format.schedule(Some("0 */6 * * *"), Some(Instant.parse("2026-11-09T05:00:00Z"))) ==> "Scheduled poll runs on 0 */6 * * * (UTC+7). Next poll at 12:00 09/11."
+      }
+      test("off") { Format.schedule(None, None) ==> "Scheduled poll is off. Send /cron 0 */6 * * * to set it." }
     }
 
     test("account pick") {
