@@ -1,0 +1,9 @@
+{
+  "sender": "vpbankonline@vpb.com.vn",
+  "outcome": "Parsed",
+  "amount": "2345678",
+  "payee": "VPBank TD",
+  "raw_payee": "Tiền gửi có kỳ hạn thường",
+  "date": "2026-08-31",
+  "account_id": "00000000-0000-4000-8000-000000000004"
+}

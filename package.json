@@ -1,0 +1,47 @@
+{
+  "name": "actualbudget-composer",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Imports bank notification emails from Gmail into Actual Budget, through a Telegram bot and CSS selector rules.",
+  "bin": {
+    "actualbudget-composer": "bin/actualbudget-composer.js"
+  },
+  "files": [
+    "bin",
+    "dist/main.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sangoisanga/actualbudget-composer.git"
+  },
+  "scripts": {
+    "build": "./mill app.fullLinkJS && rm -rf dist && cp -r out/app/fullLinkJS.dest dist",
+    "prepack": "npm run build",
+    "test": "./mill __.test",
+    "format": "./mill __.reformat",
+    "lint": "./mill __.checkFormat",
+    "bot": "node --env-file=.env dist/main.js bot",
+    "poll": "node --env-file=.env dist/main.js poll",
+    "auth:gmail": "node --env-file=.env dist/main.js auth-gmail",
+    "inspect:mail": "node --env-file=.env dist/main.js inspect-mail",
+    "check-rules": "node dist/main.js check-rules"
+  },
+  "keywords": [
+    "actual-budget",
+    "gmail",
+    "telegram-bot",
+    "bank"
+  ],
+  "author": "sangoisanga",
+  "license": "MIT",
+  "engines": {
+    "node": ">=26"
+  },
+  "dependencies": {
+    "@actual-app/api": "^26.9.0",
+    "@googleapis/gmail": "^22.0.1",
+    "cheerio": "^1.2.0",
+    "google-auth-library": "^11.1.0",
+    "grammy": "^1.45.1"
+  }
+}

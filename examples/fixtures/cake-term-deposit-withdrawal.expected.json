@@ -1,0 +1,12 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "5012678",
+  "payee": "Rút tiền gửi tiết kiệm",
+  "raw_payee": "Rút tiền gửi tiết kiệm",
+  "date": "2026-09-08",
+  "reference": "900000010",
+  "notes": "Rút tiền gửi tiết kiệm",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}

@@ -1,0 +1,11 @@
+[
+  { "match": ["begroup"], "payee": "Be", "note": "Be" },
+  { "match": ["vnpay"], "payee": "VNPay" },
+  { "match": ["tien lo"], "payee": "GS25" },
+  { "match": ["green sm"], "payee": "XanhSM" },
+  { "match": ["youtube"], "payee": "Youtube" },
+  { "match": ["halico"], "payee": "Bun real" },
+  { "match": ["bhx"], "payee": "BHX" },
+  { "match": ["tiền gửi có kỳ hạn"], "payee": "VPBank TD" },
+  { "match": ["tt the tin dung cake"], "payee": "Cake Credit Card payment" }
+]

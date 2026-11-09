@@ -1,0 +1,11 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "-12000",
+  "payee": "Be",
+  "raw_payee": "MPGS BEGROUP 9 HO CHI MINH VN",
+  "date": "2026-08-18",
+  "notes": "Be",
+  "account_key": "••1111",
+  "account_id": "00000000-0000-4000-8000-000000000001"
+}

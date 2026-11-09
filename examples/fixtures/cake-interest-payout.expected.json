@@ -1,0 +1,11 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "140",
+  "payee": "Trả lãi tài khoản thanh toán",
+  "raw_payee": "Trả lãi tài khoản thanh toán",
+  "date": "2026-09-01",
+  "reference": "900000004",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}

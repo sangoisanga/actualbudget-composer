@@ -1,0 +1,12 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "200000",
+  "payee": "TRAN THI BICH",
+  "raw_payee": "TRAN THI BICH",
+  "date": "2026-08-13",
+  "reference": "900000011",
+  "notes": "CAKE;0900000001;TRAN THI BICH chuyen tien an trua",
+  "account_key": "522222***2222",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}

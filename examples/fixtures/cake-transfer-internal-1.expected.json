@@ -1,0 +1,12 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "-100000",
+  "payee": "NGUYỄN VĂN AN",
+  "raw_payee": "NGUYỄN VĂN AN",
+  "date": "2026-08-15",
+  "reference": "900000012",
+  "notes": "NGUYEN VAN AN chuyển tiền",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}

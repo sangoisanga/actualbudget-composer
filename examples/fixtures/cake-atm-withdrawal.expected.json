@@ -1,0 +1,11 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "-500000",
+  "payee": "Rút tiền mặt ATM",
+  "raw_payee": "Rút tiền mặt ATM",
+  "date": "2026-09-25",
+  "reference": "900000002",
+  "notes": "Rút tiền mặt qua ATM",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}

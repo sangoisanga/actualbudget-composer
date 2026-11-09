@@ -1,0 +1,12 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "-30000",
+  "payee": "LE VAN BINH",
+  "raw_payee": "LE VAN BINH",
+  "date": "2026-08-17",
+  "reference": "900000014",
+  "notes": "NGUYEN VAN AN chuyen tien",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}

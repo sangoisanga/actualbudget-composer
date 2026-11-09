@@ -1,0 +1,37 @@
+//| mill-version: 1.3.1
+package build
+
+import mill.*, scalalib.*, scalajslib.*, scalajslib.api.*, scalalib.scalafmt.ScalafmtModule
+
+trait ComposerModule extends ScalaJSModule, ScalafmtModule {
+  def scalaVersion = "3.9.0"
+  def scalaJSVersion = "1.22.0"
+  def scalacOptions = Seq("-deprecation", "-feature", "-Wunused:all", "-Werror")
+  def moduleKind = Task { ModuleKind.ESModule }
+  // js.async and js.await compile to native async functions, which need ES2017.
+  def esFeatures = Task { ESFeatures.Defaults.withESVersion(ESVersion.ES2017) }
+  object test extends ScalaJSTests, TestModule.Utest {
+    def utestVersion = "0.9.5"
+    // Mill sets MILL_TEST_RESOURCE_DIR for JVM tests only.
+    override def jsEnvConfig = Task { JsEnvConfig.NodeJs(env = Map("COMPOSER_ROOT" -> mill.api.BuildCtx.workspaceRoot.toString, "MILL_TEST_RESOURCE_DIR" -> (moduleDir / "resources").toString)) }
+  }
+}
+
+object domain extends ComposerModule {
+  def mvnDeps = Seq(mvn"com.lihaoyi::upickle::4.4.3", mvn"io.github.cquiroz::scala-java-time::2.8.0")
+}
+
+object application extends ComposerModule {
+  def moduleDeps = Seq(domain)
+}
+
+object adapters extends ComposerModule {
+  def moduleDeps = Seq(application)
+  // A JS facade constructor hands its parameters to JS, so Scala reports them as unused.
+  def scalacOptions = super.scalacOptions() ++ Seq("-Wconf:msg=unused explicit parameter&src=.*/facade/.*:s")
+}
+
+object app extends ComposerModule {
+  def moduleDeps = Seq(adapters)
+  def mainClass = Some("composer.Main")
+}

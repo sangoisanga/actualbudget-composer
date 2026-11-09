@@ -1,0 +1,159 @@
+{
+  "no-reply@cake.vn": [
+    {
+      "ignore": true,
+      "match_selector": "tr:has(> td:contains(\"Loại giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"]):contains(\"Tái tục tài khoản tiền gửi\")"
+    },
+    {
+      "ignore": true,
+      "match_selector": "tr:has(> td:contains(\"Lý do thất bại\"))"
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền rút trước hạn\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_default": "Rút tiền gửi tiết kiệm",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_selector": "tr:has(> td:contains(\"Tài khoản\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "0900000001 - Tài khoản thanh toán": "00000000-0000-4000-8000-000000000002"
+      }
+    },
+    {
+      "amount_selector": "tr:has(> td:contains(\"Giá trị\")) > td[style*=\"border-bottom: 1px solid #f2f1f7\"]:not([style*=\"color: #666f80\"])",
+      "payee_selector": "tr:has(> td:contains(\"Tại\")) > td[style*=\"border-bottom: 1px solid #f2f1f7\"]:not([style*=\"color: #666f80\"])",
+      "date_selector": "tr:has(> td:contains(\"Vào lúc\")) > td[style*=\"border-bottom: 1px solid #f2f1f7\"]:not([style*=\"color: #666f80\"])",
+      "notes_selector": "tr:has(> td:contains(\"Giao dịch\")) > td[style*=\"border-bottom: 1px solid #f2f1f7\"]:not([style*=\"color: #666f80\"])",
+      "account_selector": "tr:has(> td:contains(\"Số thẻ\")) > td[style*=\"border-bottom: 1px solid #f2f1f7\"]:not([style*=\"color: #666f80\"])",
+      "account_map": {
+        "••1111": "00000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Tên người nhận\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_selector": "tr:has(> td:contains(\"Tài khoản chuyển\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "0900000001 - Tài khoản cashback": "00000000-0000-4000-8000-000000000003"
+      },
+      "account_default": "00000000-0000-4000-8000-000000000002"
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Tên người chuyển\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_selector": "tr:has(> td:contains(\"Tài khoản chuyển\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "0900000001 - Tài khoản cashback": "00000000-0000-4000-8000-000000000003"
+      },
+      "account_default": "00000000-0000-4000-8000-000000000002"
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Nhà cung cấp\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_selector": "tr:has(> td:contains(\"Tài khoản\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "0900000001 - Tài khoản cashback": "00000000-0000-4000-8000-000000000003"
+      },
+      "account_default": "00000000-0000-4000-8000-000000000002"
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Loại giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"]):contains(\"Trả lãi\")",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_selector": "tr:has(> td:contains(\"Tài khoản\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "0900000001 - Tài khoản thanh toán": "00000000-0000-4000-8000-000000000002"
+      }
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Loại giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"]):contains(\"Giao dịch điều chỉnh\")",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_selector": "tr:has(> td:contains(\"Tài khoản\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "0900000001 - Tài khoản thanh toán": "00000000-0000-4000-8000-000000000002"
+      }
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền thanh toán\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Nội dung\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"]):contains(\"TT THE TIN DUNG\")",
+      "date_selector": "tr:has(> td:contains(\"Ngày giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"]):contains(\"TT THE TIN DUNG\")",
+      "account_selector": "tr:has(> td:contains(\"Số thẻ\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "411111******1111": "00000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Loại giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"]):contains(\"Mở tài khoản tiền gửi\")",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_selector": "tr:has(> td:contains(\"Tài khoản\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_map": {
+        "0900000001 - Tài khoản thanh toán": "00000000-0000-4000-8000-000000000002"
+      }
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"Số tiền\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "payee_selector": "tr:has(> td:contains(\"Loại giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"]):contains(\"Rút tiền mặt\")",
+      "date_selector": "tr:has(> td:contains(\"Ngày giờ giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "id_selector": "tr:has(> td:contains(\"Mã giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "notes_selector": "tr:has(> td:contains(\"Nội dung giao dịch\")) > td[style*=\"padding: 8px 0\"]:not([style*=\"width: 30%\"])",
+      "account_default": "00000000-0000-4000-8000-000000000002"
+    }
+  ],
+  "vpbankonline@vpb.com.vn": [
+    {
+      "ignore": true,
+      "match_selector": "p:contains(\"khác thường\")"
+    },
+    {
+      "amount_selector": "td:contains(\"Số tiền trích nợ\") + td",
+      "payee_selector": "td:contains(\"Tên người hưởng\") + td",
+      "date_selector": "td:contains(\"Ngày, giờ giao dịch\") + td",
+      "id_selector": "td:contains(\"Mã giao dịch\") + td",
+      "notes_selector": "td:contains(\"Nội dung chuyển tiền\") + td",
+      "account_selector": "td:contains(\"Tài khoản trích nợ\") + td",
+      "account_map": {
+        "0900000001": "00000000-0000-4000-8000-000000000004"
+      }
+    },
+    {
+      "amount_sign": "explicit",
+      "amount_selector": "tr:has(> td:contains(\"%/năm\")) > td:nth-child(6)",
+      "payee_selector": "tr:has(> td:contains(\"%/năm\")) > td:nth-child(5)",
+      "date_selector": "tr:contains(\"Term deposit settlement date\") + tr > td",
+      "account_default": "00000000-0000-4000-8000-000000000004"
+    },
+    {
+      "amount_selector": "tr:has(th:contains(\"Ngày hiệu lực\")) + tr > td:nth-child(2)",
+      "payee_selector": "tr:has(th:contains(\"Ngày hiệu lực\")) + tr > td:nth-child(8)",
+      "date_selector": "td:contains(\"Ngày giờ mở tiền gửi\")",
+      "account_default": "00000000-0000-4000-8000-000000000004"
+    }
+  ]
+}

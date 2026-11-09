@@ -1,0 +1,23 @@
+node_modules
+dist
+*.log
+
+# Mill and Scala tooling
+out/
+.bsp/
+.metals/
+.bloop/
+.scala-build/
+
+.env
+data/
+
+.DS_Store
+.idea
+.vscode
+.claude/*
+!.claude/skills
+.pi
+.firecrawl
+
+thoughts/

@@ -1,0 +1,34 @@
+{
+  "id": "msg123",
+  "payload": {
+    "mimeType": "multipart/alternative",
+    "headers": [
+      {
+        "name": "From",
+        "value": "\"Cake by VPBank\" <no-reply@cake.vn>"
+      },
+      {
+        "name": "Subject",
+        "value": "Thông báo giao dịch qua thẻ Cake thành công"
+      },
+      {
+        "name": "Date",
+        "value": "Tue, 18 Aug 2026 12:00:00"
+      }
+    ],
+    "parts": [
+      {
+        "mimeType": "text/plain",
+        "body": {
+          "data": ""
+        }
+      },
+      {
+        "mimeType": "text/html",
+        "body": {
+          "data": "PGh0bWw-PGJvZHk-PHNwYW4gY2xhc3M9ImFtb3VudC12YWx1ZSI-NTAsMDAwIFZORDwvc3Bhbj48c3BhbiBjbGFzcz0icGF5ZWUtbmFtZSI-R29uZyBDaGEgVGVhPC9zcGFuPjwvYm9keT48L2h0bWw-"
+        }
+      }
+    ]
+  }
+}

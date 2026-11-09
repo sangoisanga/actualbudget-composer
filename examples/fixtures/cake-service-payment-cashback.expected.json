@@ -1,0 +1,12 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "-12000",
+  "payee": "Be",
+  "raw_payee": "beGroup",
+  "date": "2026-08-25",
+  "reference": "900000000000000006",
+  "notes": "Be",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000003"
+}

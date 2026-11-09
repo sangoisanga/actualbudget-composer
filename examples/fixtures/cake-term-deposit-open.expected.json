@@ -1,0 +1,12 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "-5000000",
+  "payee": "Mở tài khoản tiền gửi",
+  "raw_payee": "Mở tài khoản tiền gửi",
+  "date": "2026-09-04",
+  "reference": "EXAMPLE00001",
+  "notes": "Mở tài khoản tiền gửi Term Deposit",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}

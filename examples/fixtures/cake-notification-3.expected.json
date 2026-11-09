@@ -1,0 +1,11 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "-27000",
+  "payee": "GS25",
+  "raw_payee": "CTY TNHH CUA HANG TIEN LO TP.HCM VN",
+  "date": "2026-08-18",
+  "notes": "Thanh toán POS",
+  "account_key": "••1111",
+  "account_id": "00000000-0000-4000-8000-000000000001"
+}

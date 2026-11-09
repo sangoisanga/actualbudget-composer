@@ -1,0 +1,12 @@
+{
+  "sender": "vpbankonline@vpb.com.vn",
+  "outcome": "Parsed",
+  "amount": "-3000000",
+  "payee": "NGUYEN VAN AN",
+  "raw_payee": "NGUYEN VAN AN",
+  "date": "2026-08-31",
+  "reference": "FT26000000000001",
+  "notes": "NGUYEN VAN AN1000VND chuyen tien",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000004"
+}

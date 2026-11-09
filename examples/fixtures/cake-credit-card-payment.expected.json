@@ -1,0 +1,11 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "1234567",
+  "payee": "Cake Credit Card payment",
+  "raw_payee": "900000003 - NGUYỄN VĂN AN - TT THE TIN DUNG CAKE",
+  "date": "2026-08-31",
+  "notes": "900000003 - NGUYỄN VĂN AN - TT THE TIN DUNG CAKE",
+  "account_key": "411111******1111",
+  "account_id": "00000000-0000-4000-8000-000000000001"
+}

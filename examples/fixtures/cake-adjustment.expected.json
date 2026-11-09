@@ -1,0 +1,12 @@
+{
+  "sender": "no-reply@cake.vn",
+  "outcome": "Parsed",
+  "amount": "4000000",
+  "payee": "Giao dịch điều chỉnh",
+  "raw_payee": "Giao dịch điều chỉnh",
+  "date": "2026-08-31",
+  "reference": "900000001",
+  "notes": "Thanh toán hoá đơn",
+  "account_key": "0900000001",
+  "account_id": "00000000-0000-4000-8000-000000000002"
+}
