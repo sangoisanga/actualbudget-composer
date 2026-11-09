@@ -1,6 +1,6 @@
 {
   "name": "actualbudget-composer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Imports bank notification emails from Gmail into Actual Budget, through a Telegram bot and CSS selector rules.",
   "bin": {
